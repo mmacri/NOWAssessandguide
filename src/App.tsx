@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Header } from './components/Layout/Header';
 import { Footer } from './components/Layout/Footer';
 import { Welcome } from './components/Introduction/Welcome';
-import { ContactForm } from './components/Introduction/ContactForm';
 import { QuestionnaireContainer } from './components/Assessment/QuestionnaireContainer';
 import { ResultsContainer } from './components/Results/ResultsContainer';
 import { AssessmentProvider } from './context/AssessmentContext';
@@ -15,14 +14,10 @@ export function App() {
     component: <Welcome onContinue={() => setCurrentStep(1)} />
   }, {
     id: 1,
-    name: 'Contact Info',
-    component: <ContactForm onContinue={() => setCurrentStep(2)} />
+    name: 'Assessment',
+    component: <QuestionnaireContainer onContinue={() => setCurrentStep(2)} />
   }, {
     id: 2,
-    name: 'Assessment',
-    component: <QuestionnaireContainer onContinue={() => setCurrentStep(3)} />
-  }, {
-    id: 3,
     name: 'Results',
     component: <ResultsContainer onRestart={() => setCurrentStep(0)} />
   }];

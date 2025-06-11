@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, createElement } from 'react';
 import { Button } from '../Common/Button';
 import { useAssessment } from '../../context/AssessmentContext';
 import { ModuleRecommendations } from './ModuleRecommendations';
 import { ImplementationRoadmap } from './ImplementationRoadmap';
 import { ROICalculator } from './ROICalculator';
 import { ExecutiveSummary } from './ExecutiveSummary';
+import { PrinterIcon, DownloadIcon } from 'lucide-react';
 interface ResultsContainerProps {
   onRestart: () => void;
 }
@@ -13,9 +14,9 @@ export const ResultsContainer = ({
 }: ResultsContainerProps) => {
   const [activeTab, setActiveTab] = useState('recommendations');
   const {
-    recommendedModules,
-    contactInfo
+    recommendedModules
   } = useAssessment();
+  const resultsRef = useRef<HTMLDivElement>(null);
   const tabs = [{
     id: 'recommendations',
     label: 'Recommendations'
@@ -29,13 +30,30 @@ export const ResultsContainer = ({
     id: 'summary',
     label: 'Executive Summary'
   }];
-  return <div className="max-w-4xl mx-auto">
+  const handlePrint = () => {
+    window.print();
+  };
+  const handleDownload = () => {
+    // Create a text version of the results
+    const content = resultsRef.current?.innerText || '';
+    const blob = new Blob([content], {
+      type: 'text/plain'
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'servicenow-assessment-results.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+  return <div>
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-[#293e40]">
           Your ServiceNow Recommendation Results
         </h2>
         <p className="mt-2 text-xl text-gray-600">
-          {contactInfo?.firstName ? `Thank you, ${contactInfo.firstName}!` : 'Thank you for completing the assessment!'}{' '}
           Here are your personalized ServiceNow recommendations.
         </p>
       </div>
@@ -47,28 +65,50 @@ export const ResultsContainer = ({
               </button>)}
           </nav>
         </div>
-        <div className="p-6">
+        <div className="p-6" ref={resultsRef}>
           {activeTab === 'recommendations' && <ModuleRecommendations modules={recommendedModules} />}
           {activeTab === 'roadmap' && <ImplementationRoadmap modules={recommendedModules} />}
           {activeTab === 'roi' && <ROICalculator modules={recommendedModules} />}
-          {activeTab === 'summary' && <ExecutiveSummary modules={recommendedModules} contactInfo={contactInfo} />}
+          {activeTab === 'summary' && <ExecutiveSummary modules={recommendedModules} />}
         </div>
       </div>
       <div className="mt-8 flex justify-center space-x-4">
         <Button variant="outline" onClick={onRestart}>
           Start New Assessment
         </Button>
-        <Button variant="secondary">Schedule Consultation</Button>
+        <Button variant="secondary" onClick={handlePrint} className="flex items-center">
+          <PrinterIcon className="h-4 w-4 mr-2" />
+          Print Results
+        </Button>
+        <Button onClick={handleDownload} className="flex items-center">
+          <DownloadIcon className="h-4 w-4 mr-2" />
+          Download Results
+        </Button>
       </div>
-      {!contactInfo && <div className="mt-8 bg-[#edf7f4] p-4 rounded-lg border border-[#d1e9e0] text-center">
-          <p className="text-[#293e40] font-medium mb-2">
-            Want to save your results or receive more detailed insights?
-          </p>
-          <p className="text-gray-600 mb-4">
-            Provide your contact information to receive a comprehensive report
-            and personalized consultation.
-          </p>
-          <Button onClick={onRestart}>Share Contact Information</Button>
-        </div>}
+      {/* Add print-specific styling */}
+      <style>
+        {`
+          @media print {
+            body * {
+              visibility: hidden;
+            }
+            #root > * {
+              visibility: hidden;
+            }
+            .bg-white {
+              box-shadow: none !important;
+            }
+            [ref="resultsRef"], 
+            [ref="resultsRef"] * {
+              visibility: visible;
+            }
+            [ref="resultsRef"] {
+              position: absolute;
+              left: 0;
+              top: 0;
+            }
+          }
+        `}
+      </style>
     </div>;
 };

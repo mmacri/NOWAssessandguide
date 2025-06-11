@@ -1,11 +1,4 @@
 import React, { useState, createContext, useContext } from 'react';
-interface ContactInfo {
-  firstName: string;
-  lastName: string;
-  email: string;
-  company: string;
-  jobTitle: string;
-}
 interface Answer {
   questionId: string;
   value: string | number | string[];
@@ -18,8 +11,6 @@ interface RecommendedModule {
   benefits: string[];
 }
 interface AssessmentContextType {
-  contactInfo: ContactInfo | null;
-  setContactInfo: (info: ContactInfo) => void;
   answers: Answer[];
   addAnswer: (answer: Answer) => void;
   recommendedModules: RecommendedModule[];
@@ -29,9 +20,8 @@ const AssessmentContext = createContext<AssessmentContextType | undefined>(undef
 export const AssessmentProvider = ({
   children
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) => {
-  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [recommendedModules, setRecommendedModules] = useState<RecommendedModule[]>([]);
   const addAnswer = (answer: Answer) => {
@@ -43,8 +33,6 @@ export const AssessmentProvider = ({
     });
   };
   return <AssessmentContext.Provider value={{
-    contactInfo,
-    setContactInfo,
     answers,
     addAnswer,
     recommendedModules,

@@ -17,11 +17,9 @@ interface ContactInfo {
 }
 interface ExecutiveSummaryProps {
   modules: Module[];
-  contactInfo: ContactInfo | null;
 }
 export const ExecutiveSummary = ({
-  modules,
-  contactInfo
+  modules
 }: ExecutiveSummaryProps) => {
   const {
     answers
@@ -121,11 +119,9 @@ export const ExecutiveSummary = ({
         </h4>
         <p className="text-gray-600">
           Based on your assessment responses, we've identified key operational
-          challenges and opportunities for
-          {contactInfo?.company ? ` ${contactInfo.company}` : ' your organization'}
-          . The following summary provides a strategic overview of our
-          recommendations to address these challenges and drive business value
-          through ServiceNow.
+          challenges and opportunities for your organization. The following
+          summary provides a strategic overview of our recommendations to
+          address these challenges and drive business value through ServiceNow.
         </p>
       </div>
       {/* Strategic Insights based on assessment */}
@@ -300,16 +296,11 @@ export const ExecutiveSummary = ({
             </a>)}
         </div>
       </div>
-      {contactInfo ? <div className="flex justify-center">
-          <Button className="flex items-center">
-            <DownloadIcon className="h-4 w-4 mr-2" />
-            Download Full Executive Summary (PDF)
-          </Button>
-        </div> : <div className="flex justify-center">
-          <Button className="flex items-center">
-            <UserPlusIcon className="h-4 w-4 mr-2" />
-            Share Contact Info for Full Report
-          </Button>
-        </div>}
+      <div className="flex justify-center">
+        <Button className="flex items-center">
+          <DownloadIcon className="h-4 w-4 mr-2" />
+          Download Full Executive Summary (PDF)
+        </Button>
+      </div>
     </div>;
 };
